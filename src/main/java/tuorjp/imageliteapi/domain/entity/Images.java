@@ -52,4 +52,8 @@ public class Images {
     @Column
     @Lob //diz que é um arquivo
     private byte[] file;
+
+    public String getFileName() {
+        return getName().concat(".").concat(getExtension().name());
+    }
 }

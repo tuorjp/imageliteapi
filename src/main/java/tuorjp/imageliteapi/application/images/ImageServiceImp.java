@@ -7,6 +7,8 @@ import tuorjp.imageliteapi.domain.entity.Images;
 import tuorjp.imageliteapi.domain.service.ImageService;
 import tuorjp.imageliteapi.infra.repository.ImageRepository;
 
+import java.util.Optional;
+
 /*
 * O repository extende o JpaRepository que apenas modifica os dados no banco de dados
 * O service é a camada que manipula a entidade (responsável por toda a lógica de negócio)
@@ -25,5 +27,10 @@ public class ImageServiceImp implements ImageService {
     @Transactional
     public Images save(Images image) {
         return repository.save(image);
+    }
+
+    @Override
+    public Optional<Images> findById(String id) {
+        return repository.findById(id);
     }
 }
