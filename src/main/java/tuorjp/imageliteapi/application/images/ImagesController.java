@@ -16,6 +16,7 @@ import tuorjp.imageliteapi.domain.service.ImageService;
 import java.io.IOException;
 import java.net.URI;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("v1/images")
@@ -69,6 +70,22 @@ public class ImagesController {
         );
 
         return new ResponseEntity<>(image.getFile(), headers, HttpStatus.OK);
+    }
+
+    @GetMapping
+    //localhost:8080/v1/images?extension=PNG&query=nature
+    public ResponseEntity<List<ImageDTO>> search(
+            @RequestParam(value = "extension", required = false) String extension,
+            @RequestParam(value = "quey", required = false) String query
+    ) {
+        var result = service.search(ImageExtension.valueOf(extension), query);
+
+        var images = result.stream().map(image -> {
+            var url = buildImageURL(image);
+            return mapper.imageToDTO(image, url.toString());
+        }).collect(Collectors.toList());
+
+        return ResponseEntity.ok(images);
     }
 
     //método que cria a uri da imagem
