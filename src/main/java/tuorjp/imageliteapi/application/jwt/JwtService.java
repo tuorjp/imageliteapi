@@ -1,11 +1,12 @@
 package tuorjp.imageliteapi.application.jwt;
 
-import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import tuorjp.imageliteapi.domain.AccessToken;
 import tuorjp.imageliteapi.domain.entity.User;
 
+import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -46,5 +47,22 @@ public class JwtService {
         claims.put("name", user.getName());
 
         return claims;
+    }
+
+    public String getEmailFromToken(String token) {
+        try {
+            JwtParser build = Jwts
+                    .parser()
+                    .verifyWith(keyGenerator.getKey())
+                    .build();
+
+            Jws<Claims> jwsClaims = build.parseSignedClaims(token);
+
+            Claims claims = jwsClaims.getPayload();
+
+            return claims.getSubject();
+        } catch (JwtException e) {
+            throw new InvalidTokenException(e.getMessage());
+        }
     }
 }
